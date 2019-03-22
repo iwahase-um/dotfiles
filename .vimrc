@@ -175,6 +175,7 @@ syntax enable
 "colorscheme midnight2
 "colorscheme kalisi
 colorscheme ron 
+"colorscheme iceberg 
 "----------------
 " }}}
 
@@ -194,7 +195,6 @@ set ambiwidth=double
 set smartcase " entering uppercase characters.
 set incsearch " incremental search - shows what was found
 set hlsearch " highlights what it found
-set laststatus=2 " show status line
 set guifontset=-*-fixed-medium-r-normal--16-*-*-*-c-*,*-r-*
 set hidden
 set nobk " do not make backup file
@@ -213,17 +213,20 @@ set virtualedit=block " 矩形選択で文字のない箇所にカーソル移�
 "hi CursorLine cterm=NONE term=reverse ctermbg=238
 " カーソルラインがONの時、行番号をハイライトする
 "hi CursorColumn cterm=NONE ctermbg=238 ctermfg=Red
+" タブ空白改行の可視化
+"set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
+"set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:% "改行コードはデフォルトの表示にする（区別がつかなくなるから）$ -> LF ^M -> CR
 
 augroup vimrcEx
 	au BufRead * if line("'\"") > 0 && line("'\"") <= line("$") |
 	\ exe "normal g`\"" | endif
 augroup END
-
+    
 " enables to use mouse
 " set mouse=a
 " set ttymouse=xterm2
 " vim ctags update ctags by typing  :TagsGenerate 
-"au BufReadPost,BufNewFile *.pm let g:vim_tags_project_tags_command = "ctags --languages=perl -f ~/.vim/tags/xxxxx.tags `pwd` 2>/dev/null &"
+" au BufReadPost,BufNewFile *.pm let g:vim_tags_project_tags_command = "ctags --languages=perl -f ~/.vim/tags/localdevjokerz.tags `pwd` 2>/dev/null &"
 " set syntax on scripts which does not have shebang
 autocmd BufNewFile,BufRead *.t set filetype=perl
 autocmd BufNewFile,BufRead *.mpl set filetype=perl
@@ -300,7 +303,16 @@ let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'  " For Unix
 
 " ----------------------- Mapping  -----------------------
 " vimshell setting {{{
+let g:vimshell_prompt_expr = 'getcwd()." > "'
+let g:vimshell_prompt_pattern = '^\f\+ > '
+"let g:vimshell_prompt = "[".$USERNAME."@".$HOSTNAME."]> "
+"let g:vimshell_secondary_prompt = "> "
+"let g:vimshell_user_prompt = '"(" . getcwd() . ") --- (" . $USER . "@" . hostname() . ")"'
 let g:vimshell_interactive_update_time = 10
+let g:vimshell_interactive_encodings = {
+\'/':'utf-8-mac',
+\}
+let g:vimshell_user_prompt = 'iconv(fnamemodify(getcwd(), ":~"), "utf-8-mac", "char")'
 "let g:vimshell_prompt = $USERNAME."% "
 " vimshell map
 nnoremap <silent> vs :VimShell<CR>
@@ -392,7 +404,8 @@ nnoremap <F3> :Cheat<CR> " Press F3 will show my vim cheat sheet
 "map <F4> :!perl %<CR>
 map <F4> :!php -l %<CR>
 map <F5> :! perl -cw %<CR>
-map <F6> :! perl -d:Trace %<CR> " debug with Devel::Trace 
+map <F6> :! perl %<CR>
+"map <F6> :! perl -d:Trace %<CR> " debug with Devel::Trace 
 map <F7> :! perl -MO=Deparse %<CR>
 "nnoremap <silent> <F8> :TlistToggle<CR> " taglist
 "map <F8> :TagbarToggle<CR> " taglist

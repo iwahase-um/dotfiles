@@ -15,7 +15,8 @@ shell -$SHELL
 escape ^Jj
 
 # I like a large scrollback buffer.
-defscrollback 1000000
+#defscrollback 1000000
+defscrollback 10000
 
 # clear scrollback buffer
 bind F eval 'scrollback 0' 'scrollback 1000' 'echo "scrollback buffer cleared"'
@@ -62,8 +63,8 @@ bind s colon 'screen -t '
 # switch window encoding
 bind ^U eval 'encoding utf8'  'info'
 bind ^E eval 'encoding eucjp' 'info'
-
-# switch window encoding and changes LANG environment variable.(for b-shell)
+#
+## switch window encoding and changes LANG environment variable.(for b-shell)
 bind u eval 'encoding utf8'  '!!!echo "LANG=ja_JP.utf8; export LANG"'  'info'
 bind e eval 'encoding eucjp' '!!!echo "LANG=ja_JP.eucJP; export LANG"' 'info'
 
@@ -254,7 +255,7 @@ screen -t 'BASH' 1
 screen -t 'BASH' 2
 screen -t 'BASH' 3
 screen -t 'BASH' 4
-screen -t 'BASH' 5
+#screen -t 'BASH' 5
 #screen -t 'DOCKER' 1 nice -n 19 sh -c 'read -n1 -t100000 -p "[DOCKER]" && exec startdocker'
 
 # include hostlocal .screenrc
