@@ -15,11 +15,12 @@ PATH=$HOME/bin:$PATH
 export PATH
 export GOPATH=$HOME/go
 
-export PS1="[\@] \e[1;34m\u@\h\e[m \w > "
+#export PS1="[\@] \e[1;34m\u@\h\e[m \w > "
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
 
-
+export LC_CTYPE='ja_JP.UTF-8'
+alias cl='clear'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -31,15 +32,36 @@ alias la='ls -aF'
 alias lla='ls -al'
 alias desktop='cd ~/Desktop'
 alias tailf='tail -f'
-alias updatedb='sudo /usr/libexec/locate.updatedb'
-#alias furusatodir='cd ~/localdev/unimediainc/FS-furusato-wp'
-#alias furusatowpcontdir='cd ~/localdev/unimediainc/FS-furusato-wp/wp-contents'
-alias furusatodir='cd ~/localdev/iwahase-um/furusato'
-alias furusatowpcontdir='cd ~/localdev/iwahase-um/furusato/wp-contents'
+
+## Directory aliases BEGINS
+## 旧ふるプレリポジトリ（オフィスは現役）
+alias fpdir='cd /Users/iwahase_ryo/localdev/iwahase-um/furusato'
+alias fpcontdir='cd /Users/iwahase_ryo/localdev/iwahase-um/furusato/wp-contents'
+# 下記だと今までの作業ブランチがないから上記のディレクトリのままにする
+#alias fpdir='cd /Users/iwahase_ryo/localdev/unimediainc/FS-furusato-wp'
+#alias fpcontdir='cd /Users/iwahase_ryo/localdev/unimediainc/FS-furusato-wp/wp-contents'
 alias jokerzdir='cd ~/localdev/jokerz'
+# システム移行後のふるプレ開発リポジトリ（Rials）
+alias fprailsdir='cd /Users/iwahase_ryo/localdev/unimediainc/FS-furupure-rails'
+# ローカル環境ふるプレ開発リポジトリ（Rials）
+alias fplocalrailsdir='cd /Users/iwahase_ryo/localdev/localdev.26p.jp/services/staging.26p.jp'
+alias fpcsvdir='cd ~/docs/dev/26pjp/datas/csv'
+alias giftcodecsvdir='cd /Users/iwahase_ryo/docs/dev/26pjp/datas/AmazonGiftCode'
+alias RtoasterDataDir='cd ~/docs/dev/Web接客レコメンド/Rtoaster'
+alias BlastMailCsvDir='cd ~/docs/dev/BlastMail/csv'
+# 2020/03/05 頻繁に使用するテキスト系ファイルのシンボリックリンク格納ディレクトリ
+alias scdir='cd ~/docs/shortcuts'
+## Directory aliases ENDS
+
+alias layoutscreen='screen -c ~/.screen/.screenrc.layout'
+alias rmscreenall='screen -r -X quit' 
 
 #alias furusatoCTags='ctags -R --langmap=PHP:+.inc --php-kinds=cfd -a -f ~/.vim/tags/furusato.tags ~/localdev/iwahase-um/furusato/'
 alias furusatoCTags='ctags -R --exclude=*furusato/office --exclude=*furusato/office_test --exclude=*furusato/subsite_sample --exclude=*.js --langmap=PHP:+.inc --php-kinds=cfd -a -f ~/.vim/tags/furusato.tags ~/localdev/iwahase-um/furusato/'
+# tags for perl tools
+#alias localdevjokerzCTags='ctags -R --language-force=Perl --perl-types=c+f+p+s+d -a -f ~/.vim/tags/localdevjokerz.tags ~/localdev/jokerz/JKZ/'
+alias localdevjokerzCTags='ctags -R --languages=Perl --perl-types=c+f+p+s+d -a -f ~/.vim/tags/localdevjokerz.tags /Users/iwahase_ryo/localdev/jokerz/JKZ/MyClass'
+
 ## make own command for Perl realated things 2012/12 ##
 function pmmethodlist() {
 	[ -n "$1" ] && perl -MDevel::Symdump -M$1 -MData::Dumper -e "print Dumper([ Devel::Symdump->new("$1")->functions ])"
@@ -81,45 +103,75 @@ GREEN="\[\033[0;32m\]"
 PS1="[\t \u@:\w]\$(parse_git_branch)\$"
 # modified 2016/07/08 git and branch matter
 
-function stg26p {
-	PW="passphrase"
-	expect -c "
-	set timeout 5
-	spawn env LANG=C /usr/bin/ssh stg_furupure
-	expect \"Enter passphrase for key '/Users/iwahase_ryo/.ssh/id_rsa':\"
-	send \"${PW}\n\"
-	expect \"$\"
-	interact
-	exit 0
-	"
-}
-
-function stg26pmysql {
-	PW="passphrase"
-	COMMAND="/usr/bin/mysql -h localhost -pPASSWORD -udbuser DBNAME --auto-rehash"
-	expect -c "
-	set timeout 5
-	spawn env LANG=C /usr/bin/ssh stg_furupure
-	expect \"Enter passphrase for key '/Users/iwahase_ryo/.ssh/id_rsa':\"
-	send \"${PW}\n\"
-	expect \"$\"
-	send \"${COMMAND}\n\"
-	expect \"MariaDB\"
-	interact
-	exit 0
-	"
-}
-
-alias sl='serverlist.sh'
-alias ssh_mysql_26p='screen -X eval "screen -t 26pMySQL 26pmysql.sh"'
-alias ssh_mysql_stg26p='screen -X eval "screen -t STG26pMySQL stg26pmysql.sh"'
-alias ssh_stg26p='ssh stg_furupure'
-alias ssh_26p='ssh furupure'
-
+## COMMAND Aliases BEGINS
+alias sl='fpsl.sh'
 alias vimtips='/usr/bin/vim -R ~/docs/mydocs/vimtips'
 alias gittips='/usr/bin/vim -R ~/docs/mydocs/gittips'
+alias commandtips='/usr/bin/vim -R ~/docs/mydocs/commandtips'
 
+# command to start local mysql server
+function mysql.server() {
+    arg="$1"
+    sudo /usr/local/mysql/support-files/mysql.server $arg
+}
+alias localmysql='mysql -h localhost -uroot -p1qaz2wsx --auto-rehash'
+
+alias updatedb='sudo /usr/libexec/locate.updatedb'
+alias ldconfig-V='sudo update_dyld_shared_cache'
+
+## COMMAND Aliases ENDS
 
 ## add 2016/08/18 git 補完
 #source ~/.git-completion.bash
+
+
+PATH="/Users/iwahase_ryo/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/Users/iwahase_ryo/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/iwahase_ryo/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/iwahase_ryo/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/iwahase_ryo/perl5"; export PERL_MM_OPT;
+## 2019/03/01 set local lib path
+alias setPL5LIBLOCALENV='export PERL5LIB=/System/Library/Perl/5.18:/System/Library/Perl/Extras/5.18:$PERL5LIB:/Users/iwahase_ryo/localdev/jokerz/JKZ/MyClass'
+
+## 2020/01/10 command for write out dot file(.gv) to your favorite file type
+## file type could be [ pdf png jpg svg ps ]
+## args are
+## 1. dot file name without extension
+## 2. new file type extension
+## 3. -fn new file name if you want
+## eg : my.dot mydot png will execute dot -Tpng mydot.gv -o mydot.png
+#function my.dot() {
+#  graphvizfile="$1"
+#  newextension="$2"
+#  execcmd=$(printf "dot -T%s %s -o %s.%s" $newextension $graphvizfile $graphvizfile $newextension ) 
+#
+#  echo "Going to Execute Command : $execcmd"
+#  eval $execcmd
+#  echo "Done"
+#
+###while getopts fn: ARG
+###do
+###    case $ARG in
+###             fn) targetmonth=$OPTARG
+###              ;;
+###    esac
+###done
+##
+#}
+## 2020/02/10エラーがでるので一旦コメントアウト
+#export -f my.dot
+
+## ctagsの設定が今更うまく行かなかった原因判明
+## 環境変数と登録パスが不十分だった
+# PATHを設定して
+#
+# setPL5LIBLOCALENV
+#
+# 下記ライブラリ内を登録
+# ctags -R --languages=Perl --perl-types=c+f+p+s+d -a -f ~/.vim/tags/localdevjokerz.tags /System/Library/Perl/5.18
+# ctags -R --languages=Perl --perl-types=c+f+p+s+d -a -f ~/.vim/tags/localdevjokerz.tags /System/Library/Perl/Extras/5.18/darwin-thread-multi-2level
+# ctags -R --languages=Perl --perl-types=c+f+p+s+d -a -f ~/.vim/tags/localdevjokerz.tags /System/Library/Perl/Extras/5.18
+# これで localdev/jokerz/JKZ内更新
+# ctags -R --languages=Perl --perl-types=c+f+p+s+d -a -f ~/.vim/tags/localdevjokerz.tags /Users/iwahase_ryo/localdev/jokerz/JKZ/MyClass
+# set tags+=~/.vim/tags/localdevjokerz.tags
 

@@ -4,7 +4,9 @@
 "------------------------
 
 " for syntastic 2018/03/06 
-"execute pathogen#infect()
+" 2020/2/5 コメントアウトされていたのを復活。
+" pathogenでプラグインを管理する場合は.vim/bundle配下に　git cloneして実行
+execute pathogen#infect()
 
 "------  Charset Init  ------
 " 文字コードの自動認識 {{{
@@ -12,6 +14,7 @@ source ~/.vim/recognize_charcode.vim
 set encoding=utf-8
 scriptencoding utf-8
 "------
+
 "#------ plugin with NeoBundle BEGIN 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
@@ -22,7 +25,15 @@ if has('vim_starting')
     set runtimepath+=~/.vim/bundle/neobundle.vim
 endif
 
+" 2020/3/5 NeoBundleの使用方法詳細を追記
 "" NeoBundleをNeoBundleで管理したい 下記のbegin end ブロックの間にインストールしたい プラグインを記述する
+"" プラグインのインストールは プラグインを追記した後
+" :NeoBundleInstall
+" プラグインのアップデートは
+" :NeoBundleUpdate
+" プラグインの削除は下記ブロック記述を削除した後に
+" :NeoBundleClean
+
 call neobundle#begin(expand('~/.vim/bundle'))
 " これは必須のため必ず記載
 NeoBundleFetch 'Shougo/neobundle.vim'
@@ -68,6 +79,19 @@ NeoBundle 'vim-scripts/dbext.vim'
 NeoBundle 'reireias/vim-cheatsheet'
 " 2018/03/06 
 NeoBundle 'itchyny/lightline.vim'
+" 2020/3/5 うまくインストールできないので一旦コメントアウト
+" vim-rubyとvim-railsはpathogenを使用してインストール。
+"NeoBundle 'vim-ruby'
+"NeoBundle 'vim-rails'
+"" 下記でrailsのタグが生成される。
+"NeoBundle 'szw/vim-tags'
+"let g:vim_tags_project_tags_command = "/usr/local/bin/ctags -f .tags -R . 2>/dev/null"
+"let g:vim_tags_gems_tags_command = "/usr/local/bin/ctags -R -f .Gemfile.lock.tags `bundle show --paths` 2>/dev/null"
+"set tags+=.tags
+"set tags+=.Gemfile.lock.tags
+
+" Enables aliases 2020/1/14
+let $BASH_ENV = "~/.bash_aliases"
 
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -166,6 +190,12 @@ let g:lightline = {
 
 " 見た目の設定
 syntax enable
+"2019/3/27 全角スペース可視化 color schemeの設定前に可視化設定が必要
+augroup highlightIdegraphicSpace
+  autocmd!
+  autocmd Colorscheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
+  autocmd VimEnter,WinEnter * match IdeographicSpace /　/
+augroup END
 "let g:solarized_termcolors=256
 " color scheme {{{
 "----------------
@@ -184,7 +214,7 @@ set diffopt+=vertical " diffは左右に並べる
 set t_Co=256
 "hi CursorLine   term=reverse cterm=none ctermbg=242
 " set cursor color 2015/04/15
-"set cursorline
+set cursorline
 "set cursorcolumn
 " back slash(yen mark) + c will show cursorline
 nnoremap <Leader>c :<C-u>setlocal cursorline!<CR>
@@ -320,6 +350,13 @@ nnoremap <silent> vsc :VimShellCreate<CR>
 nnoremap <silent> vp :VimShellPop<CR>
 " }}}
 
+" plugin setting related to vim-todoedit and partedit 20190709 {{{
+"set runtimepath+=~/src/vim_related/vim-partedit
+set runtimepath+=~/.vim/vim-partedit
+let g:maplocalleader = "\<Space>"
+let g:doneTaskFile = '~/localdev/task/done.txt'
+" }}}
+
 " day time auto insert {{{
 " usage 挿入モード時にバックスラッシュ＋[df|dd|ddj|dt]
 inoremap <Leader>df <C-R>=strftime('%Y/%m/%dT%H:%M:%S+09:00')<CR>
@@ -421,7 +458,7 @@ nmap <F10> :TrinityToggleAll<CR>
 let g:NERDTreeShowBookmarks=1
 "autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 """ open NERDTree with `Ctrl+n`
 map <C-n> :NERDTreeToggle<CR>
 "map <C-n> :TrinityToggleNERDTree<CR>
@@ -478,4 +515,33 @@ function! s:pm_template()
 	" echomsg path
 endfunction
 autocmd BufNewFile *.pm call s:pm_template()
+" }}}
+
+"template fro pl {{{
+function! s:pl_template()
+	let path = substitute(expand('%'), '.*lib/', '', 'g')
+	let path = substitute(path, '[\\/]', '::', 'g')
+	let path = substitute(path, '\.pm$', '', 'g')
+
+	call append(0, '#!/usr/bin/env perl')
+	call append(1, '# $Id: ' . path . ',v 1.0 ' . strftime('%Y/%m/%d %H:%M') . ' IwahaseRyo Exp $')
+	call append(2, '')
+	call append(3, 'use strict;')
+	call append(4, 'use warnings;')
+	call append(5, 'use FindBin;')
+	call append(6, 'my $include_path;')
+	call append(7, '')
+	call append(8, 'BEGIN {')
+	call append(9, '    $include_path = "$FindBin::Bin";')
+	call append(10,'    unshift @INC, $include_path;')
+	call append(11, '}')
+	call append(12, '')
+	call append(13, 'use Data::Dumper;')
+	call append(14, '')
+	call append(15, '')
+	call append(16, '__END__')
+	call cursor(17, 0)
+	" echomsg path
+endfunction
+autocmd BufNewFile *.pl call s:pl_template()
 " }}}

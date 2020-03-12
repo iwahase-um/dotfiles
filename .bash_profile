@@ -10,6 +10,10 @@ fi
 #fi
 
 export LC_CTYPE='ja_JP.UTF-8'
-export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLDlLIBRARY_PATH
+export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
 export PATH=${PATH}:/Applications/Julia-1.0.app/Contents/Resources/julia/bin
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
+#export PATH="/usr/local/opt/libxml2/bin:$PATH"
